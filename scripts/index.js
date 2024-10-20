@@ -10,17 +10,17 @@ function addCard(dataCard, deleteCard) {
   const cardNew = cardTemplate.querySelector('.places__item').cloneNode(true);
   cardNew.querySelector('.card__title').textContent = dataCard.name;
   cardNew.querySelector('.card__image').src = dataCard.link;
+  cardNew.querySelector('.card__image').alt = dataCard.name;
 
   const deleteButton = cardNew.querySelector('.card__delete-button');
-  deleteButton.addEventListener('click', deleteCard);
-
+  deleteButton.addEventListener('click', () => deleteCard(cardNew));
   return cardNew;
 };
 
 // @todo: Функция удаления карточки
 
-function deleteCard(event) {
-  event.target.closest('.places__item').remove();
+function deleteCard(cardNew) {
+  cardNew.remove();
 };
 
 // @todo: Вывести карточки на страницу
