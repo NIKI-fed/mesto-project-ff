@@ -1,32 +1,89 @@
 import "./index.css"; // добавьте импорт главного файла стилей 
+import {initialCards} from "./components/cards.js";
+import {openModal, closeModal} from "./components/modal.js";
+import {createCard, deleteCard, likeCard} from "./components/card.js";
 
-// @todo: Темплейт карточки
 const cardTemplate = document.querySelector('#card-template').content;
-
-// @todo: DOM узлы
 const cardsList = document.querySelector('.places__list');
 
-// @todo: Функция создания карточки
+// Кнопки открытия попапов
+const editProfileButton = document.querySelector('.profile__edit-button');
+const addCardButton = document.querySelector('.profile__add-button');
 
-function addCard(dataCard, deleteCard) {
-  const cardNew = cardTemplate.querySelector('.places__item').cloneNode(true);
-  cardNew.querySelector('.card__title').textContent = dataCard.name;
-  cardNew.querySelector('.card__image').src = dataCard.link;
-  cardNew.querySelector('.card__image').alt = dataCard.name;
+// Кнопки закрытия попапов X
+const closePopupX = document.querySelectorAll('.popup__close');
 
-  const deleteButton = cardNew.querySelector('.card__delete-button');
-  deleteButton.addEventListener('click', () => deleteCard(cardNew));
-  return cardNew;
-};
+// Попапы
+const editProfile = document.querySelector('.popup_type_edit');
+const addCard = document.querySelector('.popup_type_new-card');
 
-// @todo: Функция удаления карточки
+// Имя и род деятельности
+const nameUser = document.querySelector('.profile__title');
+const jobUser = document.querySelector('.profile__description');
 
-function deleteCard(cardNew) {
-  cardNew.remove();
-};
+const formElement = document.forms['edit-profile'];
+const nameInput = formElement.name;
+const jobInput = formElement.description;
 
-// @todo: Вывести карточки на страницу
+const newPlaceForm = document.forms['new-place'];
+const newPlaceName = newPlaceForm['place-name'];
+const newPlaceLink = newPlaceForm['link'];
 
+const captionImg = document.querySelector('.popup__caption');
+const linkImg = document.querySelector('.popup__image');
+const scaleImg = document.querySelector('.popup_type_image');
+
+// Вывести карточки на страницу
 initialCards.forEach(item => {
-  cardsList.append(addCard(item, deleteCard));
+  cardsList.append(createCard(item, deleteCard, likeCard, openImg));
 });
+
+// Открытие модалки редактирования профиля
+editProfileButton.addEventListener('click', function() {
+  openModal(editProfile);
+  nameInput.value = nameUser.textContent;
+  jobInput.value = jobUser.textContent;
+  });
+
+// Обработчик «отправки» формы (пока без отправки)
+function handleFormSubmit(evt) {
+    evt.preventDefault();
+    const newNameInput = nameInput.value;
+    const newJobInput = jobInput.value;
+    nameUser.textContent = newNameInput;
+    jobUser.textContent = newJobInput;
+    closeModal();
+};
+formElement.addEventListener('submit', handleFormSubmit);
+
+// Открытие модалки добавления карточки
+addCardButton.addEventListener('click', function() {
+  openModal(addCard);
+});
+
+// Добавление карточки
+function handleAddCard(evt) {
+  evt.preventDefault();
+  const data = {name: newPlaceName.value, link: newPlaceLink.value};
+  cardsList.prepend(createCard(data, deleteCard, likeCard));
+  newPlaceForm.reset();
+  closeModal();
+}
+newPlaceForm.addEventListener('submit', handleAddCard);
+
+//Закрытие попапа по X
+closePopupX.forEach(function(item) {
+  item.addEventListener('click', function() {
+    closeModal();
+  });
+});
+
+// Функция увеличения картинки
+function openImg(evt) {
+  captionImg.textContent = evt.target.alt;
+  linkImg.src = evt.target.src;
+  linkImg.alt = evt.target.alt;
+  if (evt.target.classList.contains('card__image')) {
+    openModal(scaleImg);
+  }
+};
