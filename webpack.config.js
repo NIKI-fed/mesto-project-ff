@@ -29,11 +29,20 @@ module.exports = {
             exclude: '/node_modules/'
         },
     // добавили правило для обработки файлов
-        {
-    // регулярное выражение, которое ищет все файлы с такими расширениями
-            test: /\.(png|svg|jpg|gif|woff(2)?|eot|ttf|otf)$/,
-            type: 'asset/resource'
-        },
+    {
+        test: /\.(png|svg|jpg|jpeg|gif)$/,
+        type: 'asset/resource',
+        generator: {
+            filename: 'images/[name].[hash][ext]',
+        }
+    },
+    {
+        test: /\.(woff|woff2|eot|ttf|otf)$/i,
+        type: 'asset/resource',
+        generator: {
+            filename: 'fonts/[name].[hash][ext]',
+        }
+    },
         // добавьте ещё одно правило:
         {
     // применять это правило только к CSS-файлам

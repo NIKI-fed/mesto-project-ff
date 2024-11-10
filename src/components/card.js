@@ -1,12 +1,16 @@
 export {createCard, deleteCard, likeCard};
 
 // Функция создания карточки
-function createCard(dataCard, deleteCard, likeCard, openImg) {
+function createCard({ name, link }, deleteCard, likeCard, openModalImg) {
     const cardTemplate = document.querySelector('#card-template').content;
     const cardNew = cardTemplate.querySelector('.places__item').cloneNode(true);
-    cardNew.querySelector('.card__title').textContent = dataCard.name;
-    cardNew.querySelector('.card__image').src = dataCard.link;
-    cardNew.querySelector('.card__image').alt = dataCard.name;
+
+    const cardTitle = cardNew.querySelector('.card__title');
+    const cardImg = cardNew.querySelector('.card__image');
+
+    cardTitle.textContent = name;
+    cardImg.src = link;
+    cardImg.alt = name;
     
     const deleteButton = cardNew.querySelector('.card__delete-button');
     deleteButton.addEventListener('click', () => deleteCard(cardNew));
@@ -14,8 +18,7 @@ function createCard(dataCard, deleteCard, likeCard, openImg) {
     const likeButton = cardNew.querySelector('.card__like-button');
     likeButton.addEventListener('click', likeCard);
 
-    const cardsList = document.querySelector('.places__list');
-    cardsList.addEventListener('click', openImg);
+    cardImg.addEventListener('click', () => openModalImg({ name, link }));
 
     return cardNew;
 };
