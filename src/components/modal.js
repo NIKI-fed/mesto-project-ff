@@ -14,6 +14,7 @@ function closeModal(popupOpened) {
     popupOpened.classList.remove('popup_is-opened');
     popupOpened.classList.add('popup_is-animated');
     document.removeEventListener('keydown', closeModalEsc);
+    document.removeEventListener('mousedown', closeModalOverlay);
     }
 };
 
