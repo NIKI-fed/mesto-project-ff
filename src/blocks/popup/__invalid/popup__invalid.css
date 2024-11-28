@@ -1,0 +1,15 @@
+.popup__input_type_error {
+    border-bottom-color: red;
+}
+
+.edit-name-input-error {
+    display: none;
+}
+
+.popup__error_visible {
+    font-size: 12px;
+    line-height: 1.2;
+    color: red;
+    display: block;
+}
+

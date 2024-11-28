@@ -1,14 +1,15 @@
 import "./index.css"; // добавьте импорт главного файла стилей 
-import {initialCards} from "./components/cards.js";
 import {openModal, closeModal} from "./components/modal.js";
 import {createCard, deleteCard, likeCard} from "./components/card.js";
+import {enableValidation, clearValidation} from "./components/validation.js";
+import {getInfoUser, updateInfoUser, getCard, addNewCard, updateAvatar} from "./components/API.js";
 
-const cardTemplate = document.querySelector('#card-template').content;
 const cardsList = document.querySelector('.places__list');
 
 // Кнопки открытия модальных окон
 const editProfileButton = document.querySelector('.profile__edit-button');
 const addCardButton = document.querySelector('.profile__add-button');
+const updateAvatarButton = document.querySelector('.avatar__edit-button');
 
 // Крестик закрытия модалки
 const modalCloseButton = document.querySelectorAll('.popup__close');
@@ -16,15 +17,21 @@ const modalCloseButton = document.querySelectorAll('.popup__close');
 // Модальные окна
 const modalEditProfile = document.querySelector('.popup_type_edit');
 const modalAddCard = document.querySelector('.popup_type_new-card');
+const modalUpdateAvatar = document.querySelector('.popup_update-avatar');
 
-// Имя и род деятельности
+// Данные пользователя
 const nameUser = document.querySelector('.profile__title');
 const jobUser = document.querySelector('.profile__description');
+const avatarUser = document.querySelector('.profile__image');
 
 const formEditProfil = document.forms['edit-profile'];
 const nameInput = formEditProfil.name;
 const jobInput = formEditProfil.description;
 
+const formUpdateAvatar = document.forms['update-avatar'];
+const linkInput = formUpdateAvatar.link;
+
+// Карточки
 const newPlaceForm = document.forms['new-place'];
 const newPlaceName = newPlaceForm['place-name'];
 const newPlaceLink = newPlaceForm['link'];
@@ -33,43 +40,104 @@ const captionImg = document.querySelector('.popup__caption');
 const linkImg = document.querySelector('.popup__image');
 const modalImg = document.querySelector('.popup_type_image');
 
-// Вывести карточки на страницу
-initialCards.forEach(item => {
-  cardsList.append(createCard(item, deleteCard, likeCard, openModalImg));
-});
+// Открытие модалки редактирования аватара
+updateAvatarButton.addEventListener('click', function() {
+  openModal(modalUpdateAvatar);
+  clearValidation(modalUpdateAvatar, config);
+  });
 
-// Открытие модалки редактирования профиля
+// Обработчик обновления аватара
+function handleFormUpdateAvatar(evt) {
+  evt.preventDefault();
+  const avatarLink = linkInput.value;
+  const buttonSave = formUpdateAvatar.querySelector('.popup__button');
+  buttonSave.textContent = 'Сохранение...'
+  updateAvatar(avatarLink)
+    .then((res) => {
+      avatarUser.style.backgroundImage = `url(${res.avatar})`
+    })
+    .catch((err) => {
+      alert('Ошибка обновления аватара. Попробуйте позже.');
+      console.log(err)
+    })
+    .finally(() => {
+      buttonSave.textContent = 'Сохранить';
+      formUpdateAvatar.reset();
+      closeModal(modalUpdateAvatar);
+    })
+};
+formUpdateAvatar.addEventListener('submit', handleFormUpdateAvatar);
+
+// Открытие модального окна редактирования профиля
 editProfileButton.addEventListener('click', function() {
   openModal(modalEditProfile);
   nameInput.value = nameUser.textContent;
   jobInput.value = jobUser.textContent;
+  clearValidation(modalEditProfile, config);
   });
 
-// Обработчик «отправки» формы (пока без отправки)
+// Обработчик отправки формы с данными пользователя
 function handleFormEditProfilSubmit(evt) {
     evt.preventDefault();
     const newNameInput = nameInput.value;
     const newJobInput = jobInput.value;
-    nameUser.textContent = newNameInput;
-    jobUser.textContent = newJobInput;
-    closeModal(modalEditProfile);
+    const buttonSave = formEditProfil.querySelector('.popup__button')
+    buttonSave.textContent = 'Сохранение...'
+    updateInfoUser(newNameInput, newJobInput)
+      .then((res) => {
+        nameUser.textContent = res.name;
+        jobUser.textContent = res.about
+      })
+      .catch((err) => {
+        alert('Ошибка обновления. Попробуйте позже.');
+        console.log(err)
+      })
+      .finally(() => {
+        buttonSave.textContent = 'Сохранить';
+        closeModal(modalEditProfile);
+      })
 };
 formEditProfil.addEventListener('submit', handleFormEditProfilSubmit);
 
 // Открытие модалки добавления карточки
-addCardButton.addEventListener('click', () => openModal(modalAddCard));
+addCardButton.addEventListener('click', function() {
+  openModal(modalAddCard);
+  clearValidation(modalAddCard, config);
+});
 
 // Добавление карточки
 function handleAddCard(evt) {
   evt.preventDefault();
-  const data = {name: newPlaceName.value, link: newPlaceLink.value};
-  cardsList.prepend(createCard(data, deleteCard, likeCard, openModalImg));
-  newPlaceForm.reset();
-  closeModal(modalAddCard);
+  const name = newPlaceName.value;
+  const link = newPlaceLink.value;
+  const buttonSave = modalAddCard.querySelector('.popup__button');
+  buttonSave.textContent = 'Сохранение...'
+  addNewCard(name, link)
+  .then ((res) => {
+    const creatNewCard = createCard(
+      { name: res.name,
+        link: res.link,
+        likes: res.likes,
+        cardId: res._id },
+      deleteCard,
+      likeCard,
+      openModalImg
+    );
+    cardsList.prepend(creatNewCard);
+  })
+  .catch((err) => {
+  alert('Ошибка загрузки. Попробуйте позже.');
+  console.log(err)
+  })
+  .finally(() => {
+    buttonSave.textContent = 'Сохранить';
+    newPlaceForm.reset();
+    closeModal(modalAddCard);
+  })
 }
 newPlaceForm.addEventListener('submit', handleAddCard);
 
-//Закрытие модального окна по крестику
+// Закрытие модального окна по крестику
 modalCloseButton.forEach(function(item) {
   item.addEventListener('click', function() {
     closeModal(item.closest('.popup'));
@@ -83,3 +151,48 @@ function openModalImg({ name, link }) {
   linkImg.src = link;
   linkImg.alt = name;
 };
+
+const config = {
+  formSelector: '.popup__form',
+  inputSelector: '.popup__input',
+  submitButtonSelector: '.popup__button',
+  inactiveButtonClass: 'popup__button_disabled',
+  inputErrorClass: 'popup__input_type_error',
+  errorClass: 'popup__error_visible'
+};
+
+enableValidation(config);
+
+// ----------------Работа с сервером---------------
+
+Promise.all([getInfoUser(), getCard()])
+  // Получение информации о пользователе с сервера
+  .then(([dataUser, dataCard]) => {
+    nameUser.textContent = dataUser.name;
+    jobUser.textContent = dataUser.about;
+    
+    avatarUser.style.backgroundImage = `url(${dataUser.avatar})`;
+    const myId = dataUser._id;
+    
+    // Получение карточек с сервера
+    dataCard.forEach(item => {
+      const cardFromServer = createCard(
+        { name: item.name,
+          link: item.link,
+          likes: item.likes,
+          cardId: item._id,
+          cardOwnerId: item.owner._id,
+          myId
+        },
+        deleteCard,
+        likeCard,
+        openModalImg
+      );
+        cardsList.append(cardFromServer);
+      });
+  })
+
+  .catch((err) => {
+    alert('Ошибка загрузки данных. Попробуйте позже.');
+    console.log(err)
+  });
