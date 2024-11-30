@@ -51,19 +51,17 @@ function handleFormUpdateAvatar(evt) {
   evt.preventDefault();
   const avatarLink = linkInput.value;
   const buttonSave = formUpdateAvatar.querySelector('.popup__button');
-  buttonSave.textContent = 'Сохранение...'
+  saving(true, buttonSave);
   updateAvatar(avatarLink)
     .then((res) => {
       avatarUser.style.backgroundImage = `url(${res.avatar})`
+      saving(false, buttonSave);
+      formUpdateAvatar.reset();
+      closeModal(modalUpdateAvatar)
     })
     .catch((err) => {
       alert('Ошибка обновления аватара. Попробуйте позже.');
       console.log(err)
-    })
-    .finally(() => {
-      buttonSave.textContent = 'Сохранить';
-      formUpdateAvatar.reset();
-      closeModal(modalUpdateAvatar);
     })
 };
 formUpdateAvatar.addEventListener('submit', handleFormUpdateAvatar);
@@ -82,19 +80,17 @@ function handleFormEditProfilSubmit(evt) {
     const newNameInput = nameInput.value;
     const newJobInput = jobInput.value;
     const buttonSave = formEditProfil.querySelector('.popup__button')
-    buttonSave.textContent = 'Сохранение...'
+    saving(true, buttonSave);
     updateInfoUser(newNameInput, newJobInput)
       .then((res) => {
         nameUser.textContent = res.name;
-        jobUser.textContent = res.about
+        jobUser.textContent = res.about;
+        closeModal(modalEditProfile);
+        saving(false, buttonSave);
       })
       .catch((err) => {
         alert('Ошибка обновления. Попробуйте позже.');
         console.log(err)
-      })
-      .finally(() => {
-        buttonSave.textContent = 'Сохранить';
-        closeModal(modalEditProfile);
       })
 };
 formEditProfil.addEventListener('submit', handleFormEditProfilSubmit);
@@ -103,6 +99,7 @@ formEditProfil.addEventListener('submit', handleFormEditProfilSubmit);
 addCardButton.addEventListener('click', function() {
   openModal(modalAddCard);
   clearValidation(modalAddCard, config);
+  //newPlaceForm.reset();
 });
 
 // Добавление карточки
@@ -111,7 +108,7 @@ function handleAddCard(evt) {
   const name = newPlaceName.value;
   const link = newPlaceLink.value;
   const buttonSave = modalAddCard.querySelector('.popup__button');
-  buttonSave.textContent = 'Сохранение...'
+  saving(true, buttonSave);
   addNewCard(name, link)
   .then ((res) => {
     const creatNewCard = createCard(
@@ -124,15 +121,13 @@ function handleAddCard(evt) {
       openModalImg
     );
     cardsList.prepend(creatNewCard);
+    saving(false, buttonSave);
+    closeModal(modalAddCard);
+    newPlaceForm.reset();
   })
   .catch((err) => {
   alert('Ошибка загрузки. Попробуйте позже.');
   console.log(err)
-  })
-  .finally(() => {
-    buttonSave.textContent = 'Сохранить';
-    newPlaceForm.reset();
-    closeModal(modalAddCard);
   })
 }
 newPlaceForm.addEventListener('submit', handleAddCard);
@@ -161,6 +156,7 @@ const config = {
   errorClass: 'popup__error_visible'
 };
 
+// Вызов общей функции валидации полей
 enableValidation(config);
 
 // ----------------Работа с сервером---------------
@@ -191,8 +187,16 @@ Promise.all([getInfoUser(), getCard()])
         cardsList.append(cardFromServer);
       });
   })
-
   .catch((err) => {
     alert('Ошибка загрузки данных. Попробуйте позже.');
     console.log(err)
   });
+
+// Функция изменения текста на кнопке
+function saving(boolean, button) {
+  if (boolean === true) {
+    button.textContent = 'Сохранение...';
+  } else {
+    button.textContent = 'Сохранить';
+  }
+}

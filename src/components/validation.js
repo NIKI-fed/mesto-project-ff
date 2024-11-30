@@ -62,7 +62,7 @@ function hasInvalidInput(inputList) {
 function toggleButtonState(inputList, buttonElement, validationConfig) {
     if (hasInvalidInput(inputList)) {
     buttonElement.disabled = true;
-    buttonElement.classList.add(validationConfig.inactiveButtonClass);
+    inactiveButton(buttonElement, validationConfig.inactiveButtonClass);
     } else {
     buttonElement.disabled = false;
     buttonElement.classList.remove(validationConfig.inactiveButtonClass);
@@ -76,5 +76,10 @@ function clearValidation(formElement, validationConfig) {
     inputList.forEach((inputElement) => {
         hideInputError(formElement, inputElement, validationConfig)
     });
-        buttonElement.classList.add(validationConfig.inactiveButtonClass);
+    inactiveButton(buttonElement, validationConfig.inactiveButtonClass);
+}
+
+// Функция добавления класса с неактивной кнопкой
+function inactiveButton(button, inactivClass) {
+    button.classList.add(inactivClass);
 }
