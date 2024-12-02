@@ -55,13 +55,15 @@ function handleFormUpdateAvatar(evt) {
   updateAvatar(avatarLink)
     .then((res) => {
       avatarUser.style.backgroundImage = `url(${res.avatar})`
-      saving(false, buttonSave);
       formUpdateAvatar.reset();
       closeModal(modalUpdateAvatar)
     })
     .catch((err) => {
       alert('Ошибка обновления аватара. Попробуйте позже.');
       console.log(err)
+    })
+    .finally(() => {
+      saving(false, buttonSave);
     })
 };
 formUpdateAvatar.addEventListener('submit', handleFormUpdateAvatar);
@@ -86,11 +88,13 @@ function handleFormEditProfilSubmit(evt) {
         nameUser.textContent = res.name;
         jobUser.textContent = res.about;
         closeModal(modalEditProfile);
-        saving(false, buttonSave);
       })
       .catch((err) => {
         alert('Ошибка обновления. Попробуйте позже.');
         console.log(err)
+      })
+      .finally(() => {
+        saving(false, buttonSave);
       })
 };
 formEditProfil.addEventListener('submit', handleFormEditProfilSubmit);
@@ -121,13 +125,15 @@ function handleAddCard(evt) {
       openModalImg
     );
     cardsList.prepend(creatNewCard);
-    saving(false, buttonSave);
     closeModal(modalAddCard);
     newPlaceForm.reset();
   })
   .catch((err) => {
-  alert('Ошибка загрузки. Попробуйте позже.');
-  console.log(err)
+    alert('Ошибка загрузки. Попробуйте позже.');
+    console.log(err)
+  })
+  .finally(() => {
+    saving(false, buttonSave);
   })
 }
 newPlaceForm.addEventListener('submit', handleAddCard);
