@@ -32,3 +32,7 @@ function closeModalOverlay(evt) {
         closeModal(evt.target);
         }
     };
+
+// Подтверждение удаления
+
+
