@@ -1,5 +1,5 @@
-export {createCard, deleteCard, likeCard};
-import {deleteCardFromServer, putLike, removeLike} from "../components/API.js"
+export {createCard, likeCard};
+import {putLike, removeLike} from "../components/API.js"
 
 // Функция создания карточки
 function createCard(
@@ -11,7 +11,7 @@ function createCard(
         cardOwnerId,
         myId,
     },
-    deleteCard,
+    openConfirmDelete,
     likeCard,
     openModalImg
 ) {
@@ -32,14 +32,14 @@ function createCard(
         cardLikes.style.display = 'none';
     } else {
         cardLikes.textContent = likes.length;
-        
-    }
+        }
     
     // Слушатель на удаление карточки
     if (!(cardOwnerId === myId)) {
         deleteButton.style.display = 'none';
     } else {
-        deleteButton.addEventListener('click', () => deleteCard(cardNew, cardId));
+        //deleteButton.addEventListener('click', () => deleteCard(cardNew, cardId));
+        deleteButton.addEventListener('click', () => openConfirmDelete(cardNew, cardId));
     }
     // Слушатель на лайк карточки
     likeButton.addEventListener('click', (evt) => likeCard(likeButton, cardId, cardLikes, evt));
@@ -56,18 +56,30 @@ function createCard(
     return cardNew;
 };
 
-// Функция удаления карточки с сервера
-function deleteCard(cardNew, cardId) {
-    deleteCardFromServer(cardId)
-        .then (() => {
-            cardNew.remove();
-            })
+// // Функция открытия окна подтверждения удаления
+// function confirmDelete(cardNew, cardId) {
+//     const dataDeleteCard = {
+//         card: cardNew,
+//         id: cardId
+//     };
+//     openModal(modalConfirmDelete);
+//     };
 
-        .catch((err) => {
-            alert('Ошибка удаления. Попробуйте позже.');
-            console.log(err)
-            })
-};
+// Функция удаления карточки с сервера
+// function deleteCard(cardNew, cardId) {
+//     deleteCardFromServer(cardId)
+//         .then (() => {
+//             cardNew.remove();
+//             })
+
+//         .catch((err) => {
+//             alert('Ошибка удаления. Попробуйте позже.');
+//             console.log(err)
+//             })
+//         .finally(() => {
+//             closeModal(modalConfirmDelete);
+//         })
+// };
 
 // Лайк карточки
 function likeCard(likeButton, cardId, cardLikes, evt) {

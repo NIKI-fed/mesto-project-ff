@@ -1,8 +1,8 @@
 import "./index.css"; // добавьте импорт главного файла стилей 
 import {openModal, closeModal} from "./components/modal.js";
-import {createCard, deleteCard, likeCard} from "./components/card.js";
+import {createCard, likeCard} from "./components/card.js";
 import {enableValidation, clearValidation} from "./components/validation.js";
-import {getInfoUser, updateInfoUser, getCard, addNewCard, updateAvatar} from "./components/API.js";
+import {getInfoUser, updateInfoUser, getCard, addNewCard, updateAvatar, deleteCardFromServer} from "./components/API.js";
 
 const cardsList = document.querySelector('.places__list');
 
@@ -18,20 +18,23 @@ const modalCloseButton = document.querySelectorAll('.popup__close');
 const modalEditProfile = document.querySelector('.popup_type_edit');
 const modalAddCard = document.querySelector('.popup_type_new-card');
 const modalUpdateAvatar = document.querySelector('.popup_update-avatar');
+const modalConfirmDelete = document.querySelector('.popup_confirm-delete')
 
 // Данные пользователя
 const nameUser = document.querySelector('.profile__title');
 const jobUser = document.querySelector('.profile__description');
 const avatarUser = document.querySelector('.profile__image');
 
+// Форма редактирования профиля
 const formEditProfil = document.forms['edit-profile'];
 const nameInput = formEditProfil.name;
 const jobInput = formEditProfil.description;
 
+// Форма обновления аватара
 const formUpdateAvatar = document.forms['update-avatar'];
 const linkInput = formUpdateAvatar.link;
 
-// Карточки
+// Форма добавления карточки
 const newPlaceForm = document.forms['new-place'];
 const newPlaceName = newPlaceForm['place-name'];
 const newPlaceLink = newPlaceForm['link'];
@@ -39,6 +42,9 @@ const newPlaceLink = newPlaceForm['link'];
 const captionImg = document.querySelector('.popup__caption');
 const linkImg = document.querySelector('.popup__image');
 const modalImg = document.querySelector('.popup_type_image');
+
+// Форма подтверждения удаления
+const confirmDeleteForm = document.forms['confirm-delete'];
 
 // Открытие модалки редактирования аватара
 updateAvatarButton.addEventListener('click', function() {
@@ -120,7 +126,7 @@ function handleAddCard(evt) {
         link: res.link,
         likes: res.likes,
         cardId: res._id },
-      deleteCard,
+      openConfirmDelete,
       likeCard,
       openModalImg
     );
@@ -162,6 +168,47 @@ const config = {
   errorClass: 'popup__error_visible'
 };
 
+
+
+
+
+// Подтверждение удаления
+
+let dataDeleteCard = {};
+
+// Функция открытия окна подтверждения удаления
+function openConfirmDelete(card, id) {
+    dataDeleteCard = {
+      card: card,
+      id: id
+  };
+  openModal(modalConfirmDelete);
+};
+
+// Подтверждение в модалке
+confirmDeleteForm.addEventListener('submit', (evt) => {
+  evt.preventDefault();
+  const buttonConfirmDelete = modalConfirmDelete.querySelector('.popup__button');
+  buttonConfirmDelete.textContent = 'Удаление...';
+  deleteCardFromServer(dataDeleteCard.id)
+    .then (() => {
+      dataDeleteCard.card.remove();
+    })
+    .catch((err) => {
+      alert('Ошибка удаления. Попробуйте позже.');
+      console.log(err)
+    })
+    .finally(() => {
+      closeModal(modalConfirmDelete);
+      buttonConfirmDelete.textContent = 'Да';
+    })
+})
+
+
+
+
+
+
 // Вызов общей функции валидации полей
 enableValidation(config);
 
@@ -186,7 +233,7 @@ Promise.all([getInfoUser(), getCard()])
           cardOwnerId: item.owner._id,
           myId
         },
-        deleteCard,
+        openConfirmDelete,
         likeCard,
         openModalImg
       );
