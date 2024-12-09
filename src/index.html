@@ -145,8 +145,18 @@
     </div>
   </div>
 </div>
+
 <template id="card-template">
   <li class="places__item card">
+
+    <div class="card__autor">
+      <div class="card__autor-image"></div>
+      <div class="card__autor-info">
+        <h2 class="card__autor-name">автор </h2>
+        <h3 class="card__autor-publications">Постов: </h3>
+      </div>
+    </div>
+
     <img class="card__image" src="" alt="" />
     <button type="button" class="card__delete-button"></button>
     <div class="card__description">
@@ -155,6 +165,9 @@
       <div class="card__like">
         <button type="button" class="card__like-button"></button>
         <p class="card__like-sum">0</p>
+        <div class="who-like">
+          <div class="likers-avatar"></div>
+        </div>
       </div>
     </div>
   </li>

@@ -6,3 +6,41 @@
   padding: 20px 20px 17px 20px;
   min-height: 42px;
 }
+
+.card__autor {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  background: #fff;
+  min-height: 60px;
+  padding-inline: 10px;
+}
+
+.card__autor-info {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.card__autor-image {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-size: cover;
+  background-position: center;
+}
+
+.card__autor-name {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  font-size: 18px;
+  font-weight: 400;
+  margin: 0;
+}
+
+.card__autor-publications {
+  font-size: 12px;
+  font-weight: 400;
+  margin: 0;
+}

@@ -9,7 +9,10 @@ function createCard(
         likes,
         cardId,
         cardOwnerId,
-        myId,
+        ownerName,
+        ownerAvatar,
+        sumPubl,
+        myId
     },
     openConfirmDelete,
     likeCard,
@@ -21,9 +24,17 @@ function createCard(
     const cardTitle = cardNew.querySelector('.card__title');
     const cardImg = cardNew.querySelector('.card__image');
     const cardLikes = cardNew.querySelector('.card__like-sum');
+    const cardOwnerName = cardNew.querySelector('.card__autor-name')
+    const cardOwnerAvatar = cardNew.querySelector('.card__autor-image')
+    const publications = cardNew.querySelector('.card__autor-publications')
 
     const deleteButton = cardNew.querySelector('.card__delete-button');
     const likeButton = cardNew.querySelector('.card__like-button');
+    const likers = cardNew.querySelector('.who-like');
+
+    cardOwnerName.textContent = ownerName;
+    cardOwnerAvatar.style.backgroundImage = `url(${ownerAvatar})`;
+    publications.textContent = `${'Публикаций: ' + sumPubl}`;
 
     cardTitle.textContent = name;
     cardImg.src = link;
@@ -50,11 +61,33 @@ function createCard(
         likeButton.classList.add('card__like-button_is-active');
     };
 
+    // Слушатель на лайк для появления списка лайкнувших
+    likeButton.addEventListener('mouseover', function() {
+        likers.style.display = 'block';
+    });
+
+    likeButton.addEventListener('mouseout', function() {
+        likers.style.display = 'none';
+    });
+
     // Слушатель на увеличение карточки
     cardImg.addEventListener('click', () => openModalImg({ name, link }));
     
     return cardNew;
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // // Функция открытия окна подтверждения удаления
 // function confirmDelete(cardNew, cardId) {
@@ -110,3 +143,8 @@ function likeCard(likeButton, cardId, cardLikes, evt) {
         })
     }
 };
+
+// // Появление списка лайкнувших
+// function likers(card, likeBut) {
+    
+// }

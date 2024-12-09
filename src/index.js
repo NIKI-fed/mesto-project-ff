@@ -122,14 +122,19 @@ function handleAddCard(evt) {
   addNewCard(name, link)
   .then ((res) => {
     const creatNewCard = createCard(
-      { name: res.name,
+      { 
+        name: res.name,
         link: res.link,
         likes: res.likes,
-        cardId: res._id },
+        cardId: res._id,
+        ownerName: res.owner.name,
+        ownerAvatar: res.owner.avatar
+      },
       openConfirmDelete,
       likeCard,
       openModalImg
     );
+    console.log(res)
     cardsList.prepend(creatNewCard);
     closeModal(modalAddCard);
     newPlaceForm.reset();
@@ -222,24 +227,43 @@ Promise.all([getInfoUser(), getCard()])
     
     avatarUser.style.backgroundImage = `url(${dataUser.avatar})`;
     const myId = dataUser._id;
+  
+  // Вытаскиваем массив владельцев
+    const ownerAll = dataCard.map((card) => {
+      return card.owner._id;
+    })
     
     // Получение карточек с сервера
     dataCard.forEach(item => {
+
+      let sumPubl = 0
+      for (let i = 0; i < ownerAll.length; i = i + 1) {
+        if (ownerAll[i] === item.owner._id) {
+          sumPubl = sumPubl + 1;
+        }
+      }
+
       const cardFromServer = createCard(
-        { name: item.name,
+        { 
+          name: item.name,
           link: item.link,
           likes: item.likes,
           cardId: item._id,
           cardOwnerId: item.owner._id,
+          ownerName: item.owner.name,
+          ownerAvatar: item.owner.avatar,
+          sumPubl,
           myId
         },
         openConfirmDelete,
         likeCard,
         openModalImg
       );
-        cardsList.append(cardFromServer);
-      });
+
+      cardsList.append(cardFromServer);
+    });
   })
+
   .catch((err) => {
     alert('Ошибка загрузки данных. Попробуйте позже.');
     console.log(err)
@@ -253,3 +277,10 @@ function saving(boolean, button) {
     button.textContent = 'Сохранить';
   }
 }
+
+
+// Вывожу количество публикаций пользователя
+
+// dataCard.forEach(card => {
+//   if (card.owner._id === 
+// })
