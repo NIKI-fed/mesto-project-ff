@@ -30,7 +30,11 @@ function createCard(
 
     const deleteButton = cardNew.querySelector('.card__delete-button');
     const likeButton = cardNew.querySelector('.card__like-button');
-    const likers = cardNew.querySelector('.who-like');
+    
+    
+    
+
+    
 
     cardOwnerName.textContent = ownerName;
     cardOwnerAvatar.style.backgroundImage = `url(${ownerAvatar})`;
@@ -61,29 +65,48 @@ function createCard(
         likeButton.classList.add('card__like-button_is-active');
     };
 
-    // Слушатель на лайк для появления списка лайкнувших
-    likeButton.addEventListener('mouseover', function() {
-        likers.style.display = 'block';
+
+
+
+
+    const likersList = cardNew.querySelector('.who-like__list'); // спискок лайкеров
+    
+    // Вытаскиваем ссылки на аватарки пользователей, которые лайкнули пост
+    let likerAvatarLink = likes.map(item => item.avatar);
+    //console.log(likerAvatarLink); // список ссылок на аву лайкеров на каждой карточке
+
+    // Функция отображения аватарок лайкеров
+    function newLikerAvatar(avatarLink) {
+        const likerTemplate = document.querySelector('#liker').content; //темплейт
+        const likerAvatar = likerTemplate.querySelector('.liker-avatar').cloneNode(true); //элемент списка в темплейте
+        likerAvatar.style.backgroundImage = `url(${avatarLink})`;
+        return likerAvatar;
+    }
+
+    likerAvatarLink.forEach(item => {
+        const newLiker = newLikerAvatar(item);
+        console.log(newLiker)
+        likersList.append(newLiker);
     });
 
-    likeButton.addEventListener('mouseout', function() {
-        likers.style.display = 'none';
-    });
+
+    // // Слушатель на лайк для появления списка лайкнувших
+    // if (likes.length) {
+    //     likeButton.addEventListener('mouseover', function() {
+    //         likersList.style.display = 'flex';
+    //     });
+    // };
+
+    // // Снимаем слушатель, когда уводим мышь
+    // likeButton.addEventListener('mouseout', function() {
+    //     likersList.style.display = 'none';
+    // });
 
     // Слушатель на увеличение карточки
     cardImg.addEventListener('click', () => openModalImg({ name, link }));
     
     return cardNew;
 };
-
-
-
-
-
-
-
-
-
 
 
 
@@ -144,7 +167,3 @@ function likeCard(likeButton, cardId, cardLikes, evt) {
     }
 };
 
-// // Появление списка лайкнувших
-// function likers(card, likeBut) {
-    
-// }

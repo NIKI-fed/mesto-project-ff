@@ -35,14 +35,28 @@
   margin: 0;
 }
 
-.who-like {
-  height: 30px;
-  width: 100px;
-  background-color: rgb(200, 0, 0, 0.7);
-  border-radius: 20px;
+.who-like__list {
+  width: min-content;
   position: absolute;
+  /* background-color: rgb(255, 255, 255); */
+  border-radius: 15px;
   bottom: 60px;
   right: 20px;
-  display: none;
-  transition: 0.3s;
+  display: flex;
+  gap: 0px;
+  transition: 0.9s;
+  list-style-type: none;
+  padding: 0;
+}
+
+.liker-avatar {
+  height: 30px;
+  width: 30px;
+  border-radius: 15px;
+  background-size: cover;
+  background-position: center;
+  
+  
+  
+  
 }

@@ -210,7 +210,8 @@ confirmDeleteForm.addEventListener('submit', (evt) => {
 })
 
 
-
+// console.log(window);
+// console.log(document);
 
 
 
@@ -277,10 +278,3 @@ function saving(boolean, button) {
     button.textContent = 'Сохранить';
   }
 }
-
-
-// Вывожу количество публикаций пользователя
-
-// dataCard.forEach(card => {
-//   if (card.owner._id === 
-// })
