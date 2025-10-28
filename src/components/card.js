@@ -65,15 +65,54 @@ function createCard(
         likeButton.classList.add('card__like-button_is-active');
     };
 
-
-
-
-
     const likersList = cardNew.querySelector('.who-like__list'); // спискок лайкеров
     
     // Вытаскиваем ссылки на аватарки пользователей, которые лайкнули пост
     let likerAvatarLink = likes.map(item => item.avatar);
-    //console.log(likerAvatarLink); // список ссылок на аву лайкеров на каждой карточке
+    // console.log(likerAvatarLink); // список ссылок на аву лайкеров на каждой карточке
+
+
+
+
+
+
+
+
+
+    // TODO написать логику, чтобы из всего списка лайкнувших карточку
+    //  рандомно выбирались три лайкера и помещались в массив
+
+    let countLikers = 2
+    let likerAvatarRandom = []
+
+    if (likerAvatarLink.length >= countLikers) {
+        for (let i=0; i<countLikers; i++) {
+            let random = Math.floor(Math.random()*likerAvatarLink.length)
+            // console.log(random)
+            likerAvatarRandom[i] = likerAvatarLink[random]
+            console.log(likerAvatarRandom[i])
+            
+        }
+        
+    }
+
+    // console.log(likerAvatarRandom)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     // Функция отображения аватарок лайкеров
     function newLikerAvatar(avatarLink) {
@@ -85,7 +124,7 @@ function createCard(
 
     likerAvatarLink.forEach(item => {
         const newLiker = newLikerAvatar(item);
-        console.log(newLiker)
+        // console.log(newLiker)
         likersList.append(newLiker);
     });
 
